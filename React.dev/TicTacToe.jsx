@@ -10,13 +10,8 @@ function Square({ value, onSquareClick }) {
   );
 }
 
-export default function Board() {
-  const [squares, setSquares] = React.useState
-  (Array(9).fill(null));
-// xTurn -> is true if its X turn, otherwise false
-// xIsNext -> will set xTurn to false at even turns
-  const [xTurn, xIsNext] = React.useState(true);
-
+function Board(xIsNext, squaredArray, handleGame) {
+  const [squares, setSquares] = React.useState(Array(9).fill(null));
   function handleClick(i) {
     if (squares[i] || calculateWinner(squares)) return;
     const squaredArray = squares.slice();
@@ -116,10 +111,31 @@ function calculateWinner(squares) {
     ];
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
-      if (squares[a] && squares[a] === squares[b]
-        && squares[a] === squares[c]) {
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
         return squares[a];
       }
     }
     return null;
+}
+
+export default function Game() {
+    const [xTurn, xIsNext] = React.useState(true);
+    const [history, goBack] = React.useState(Array(9).fill(null));
+    const currentArray = history[history.length-1];
+
+    function handleGame(squaredArray) {
+        goBack([[...history, squaredArray]]);
+        xIsNext(!xTurn);
+    }
+
+    return (
+        <div className="game">
+            <div className="game-board">
+                <Board xIsNext={xIsNext} squares={squaredArray} onPlay={handleGame}/>
+            </div>
+            <div className="game-info">
+
+            </div>
+        </div>
+    )
 }
